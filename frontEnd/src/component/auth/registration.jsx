@@ -88,7 +88,7 @@ function RegistrationForm() {
             </div>
             <div>
                 <h5>Already have an account? </h5>
-                <Link to="/">Sign In </Link>
+                <Link to="/login">Sign In </Link>
             </div>
         </div>
         </div>

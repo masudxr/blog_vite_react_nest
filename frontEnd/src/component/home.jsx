@@ -1,5 +1,9 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import './style.css';
+import UpdateBlogs from './blogs/displayBlogs';
+import NavBar from './navBar';
+
 
 
 const Home = (props) => {
@@ -8,10 +12,10 @@ const Home = (props) => {
 
     return (
         <>
-        <h1> Welcome {props.name}</h1>
-        <h1> Email {props.email}</h1>
-        <h1> Phone {props.phone}</h1>
-
+        <NavBar />
+        <br />
+        <br />
+        <UpdateBlogs name = {props.name}/>
         </>
     )
 };

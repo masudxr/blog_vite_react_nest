@@ -8,11 +8,26 @@ import {
   Put,
   UseGuards,
   Req,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { join } from 'path';
+import { of } from 'rxjs';
 import { BlogService } from './blog.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { UserAuthGuard } from 'src/auth/guard.user';
+
+const storage = {
+  storage: diskStorage({
+    destination: './uploads',
+    filename: (req, file, cb) => {
+      cb(null, `${file.originalname}`);
+    },
+  }),
+};
 
 @Controller('blog')
 export class BlogController {
@@ -21,6 +36,7 @@ export class BlogController {
   @UseGuards(UserAuthGuard)
   @Post()
   async create(@Body() createBlogDto: CreateBlogDto, @Req() req) {
+    console.log('Hello Gamers');
     const user = await this._blogService.verifyToken(req);
     console.log('verify User:', user);
     return await this._blogService.create(createBlogDto, user);
@@ -41,6 +57,12 @@ export class BlogController {
     }
   }
 
+  @Get('updateBlogs')
+  async updateBlogs() {
+    const blogs = await this._blogService.updateBlogs();
+    return blogs;
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this._blogService.findOne(+id);
@@ -48,8 +70,8 @@ export class BlogController {
 
   @UseGuards(UserAuthGuard)
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
-    return this._blogService.update(+id, updateBlogDto);
+  async update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
+    return await this._blogService.update(+id, updateBlogDto);
   }
 
   @UseGuards(UserAuthGuard)

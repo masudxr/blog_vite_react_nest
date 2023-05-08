@@ -43,6 +43,19 @@ export class BlogService {
     return arr;
   }
 
+  async updateBlogs() {
+    const blog = await this._blogRepository.find({
+      relations: ['user'],
+    });
+    const arr = [];
+    const len = blog.length - 1;
+    for (let i = len; i >= 0; i--) {
+      if (blog.length < 10) {
+        arr.push(blog[i]);
+      }
+    }
+    return arr;
+  }
   async findOne(id: number) {
     const blog = await this._blogRepository.findOne({
       where: {

@@ -3,12 +3,15 @@ import { useNavigate } from "react-router-dom";
 import LoginHeader from './logHeader';
 import '../style.css';
 import {  Link } from "react-router-dom";
+import Cookies from 'universal-cookie';
 
 
 export default function LoginForm() {
     const navigate = useNavigate();
+    const cookies = new Cookies();
     const [userName, setUserName] = useState(null);
     const [password, setPassword] = useState(null);
+
 
     useEffect(() => {
         handleSubmit();
@@ -37,6 +40,8 @@ export default function LoginForm() {
         const token = await res.json()
         console.log('token:', token);
         if(token.token) {
+            cookies.set("jwt token", token, {
+            });
             navigate('/')
         }
         
