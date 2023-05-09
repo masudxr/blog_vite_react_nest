@@ -32,7 +32,7 @@ export class BlogService {
   }
   async findOwnBlogs(user: any) {
     const blog = await this._blogRepository.find({
-      relations: ['user'],
+      relations: ['user', 'comments'],
     });
     const arr = [];
     for (let i = 0; i < blog.length; i++) {
@@ -40,12 +40,13 @@ export class BlogService {
         arr.push(blog[i]);
       }
     }
+    console.log('array', arr);
     return arr;
   }
 
   async updateBlogs() {
     const blog = await this._blogRepository.find({
-      relations: ['user'],
+      relations: ['user', 'comments'],
     });
     const arr = [];
     const len = blog.length - 1;
@@ -56,13 +57,21 @@ export class BlogService {
     }
     return arr;
   }
-  async findOne(id: number) {
-    const blog = await this._blogRepository.findOne({
-      where: {
-        id: id,
-      },
+  async findOne(id: string) {
+    const blog = await this._blogRepository.find({
+      relations: ['user'],
     });
-    return blog;
+
+    console.log('blog', blog);
+    console.log('blog user name', id);
+    const Array = [];
+    for (let i = 0; i < blog.length; i++) {
+      if (id == blog[i].user.name) {
+        Array.push(blog[i]);
+      }
+    }
+
+    return Array;
   }
 
   async update(id: number, updateBlogDto: UpdateBlogDto) {
@@ -113,5 +122,28 @@ export class BlogService {
       }
     }
     return false;
+  }
+  async commentUpdate(id: number, comment: UpdateBlogDto, user: any) {
+    console.log('service id', id);
+    console.log('service comment', comment);
+    console.log('service user', user);
+
+    const blog = await this._blogRepository.findOne({
+      relations: ['user'],
+      where: {
+        id: id,
+      },
+    });
+
+    console.log('curent blog', blog);
+
+    // const user = await this._blogRepository.update({ id }, { ...comment });
+    // if (user) {
+    //   return user;
+    // }
+    // throw new HttpException(
+    //   'Not Updated Please Try agaiin !! ',
+    //   HttpStatus.FORBIDDEN,
+    // );
   }
 }

@@ -30,6 +30,9 @@ export class UserService {
 
   async findOne(id: number) {
     const user = await this._userRepository.findOne({
+      relations: {
+        profile: true,
+      },
       where: {
         id: id,
       },

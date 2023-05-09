@@ -1,8 +1,8 @@
-import {  Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function NavBar() {
   return (
-    <div className='nav'>
+    <div>
       <li>
         <Link to="/">Home</Link>
       </li>

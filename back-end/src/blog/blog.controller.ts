@@ -13,10 +13,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { join } from 'path';
-import { of } from 'rxjs';
 import { BlogService } from './blog.service';
-import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { UserAuthGuard } from 'src/auth/guard.user';
 
@@ -33,10 +30,21 @@ const storage = {
 export class BlogController {
   constructor(private readonly _blogService: BlogService) {}
 
-  @UseGuards(UserAuthGuard)
   @Post()
-  async create(@Body() createBlogDto: CreateBlogDto, @Req() req) {
+  @UseGuards(UserAuthGuard)
+  @UseInterceptors(FileInterceptor('file', storage))
+  async uploadBlog(@UploadedFile() file: Express.Multer.File, @Req() req) {
     console.log('Hello Gamers');
+    console.log('req file', req.file);
+    console.log('req body', req.body.body);
+    console.log('req title', req.body.title);
+
+    const createBlogDto = {
+      title: req.body.title,
+      content: req.body.body,
+      photo: req.file.filename,
+    };
+
     const user = await this._blogService.verifyToken(req);
     console.log('verify User:', user);
     return await this._blogService.create(createBlogDto, user);
@@ -58,14 +66,14 @@ export class BlogController {
   }
 
   @Get('updateBlogs')
-  async updateBlogs() {
+  async getupdatedBlogs() {
     const blogs = await this._blogService.updateBlogs();
     return blogs;
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this._blogService.findOne(+id);
+    return this._blogService.findOne(id);
   }
 
   @UseGuards(UserAuthGuard)
@@ -78,5 +86,19 @@ export class BlogController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this._blogService.remove(+id);
+  }
+  // comment Handle
+  @UseGuards(UserAuthGuard)
+  @Put('comment/:id')
+  async commentUpdate(@Param('id') id: string, @Req() req) {
+    console.log('id', id);
+    console.log('req body', req.body);
+    const obj = {
+      comment: req.body.Comment,
+    };
+    console.log('user obj:', obj);
+    const user = await this._blogService.verifyToken(req);
+    console.log('user:', user);
+    return await this._blogService.commentUpdate(+id, req.body, user);
   }
 }

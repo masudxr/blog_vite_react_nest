@@ -1,5 +1,14 @@
 import { Blog } from 'src/blog/entities/blog.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Comment } from 'src/comment/entities/comment.entity';
+import { Profile } from 'src/profile/entities/profile.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'user' })
 export class User {
@@ -23,4 +32,11 @@ export class User {
 
   @OneToMany(() => Blog, (blog) => blog.user)
   blogs: Blog[];
+
+  @OneToOne(() => Profile, (profile) => profile.user)
+  @JoinColumn()
+  profile: Profile;
+
+  @OneToMany(() => Comment, (comment) => comment.users)
+  comment: Comment[];
 }
